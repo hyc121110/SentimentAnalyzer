@@ -22,7 +22,7 @@ tokenizer = RegexpTokenizer(r'\w+')
 from nltk.stem import WordNetLemmatizer
 
 # initialize dataframe
-df = pd.read_csv('data/reviews/employee_reviews.csv', index_col=0)
+df = pd.read_csv('data/employee_reviews.csv', index_col=0)
 df = df[['pros', 'cons']]
 #df.drop(columns=['location', 'dates', 'advice-to-mgmt', 'summary', 'helpful-count', 'job-title', 'link', 'overall-rating', 'work-balance-stars', 'culture-values-stars', 'carrer-opportunities-stars'], inplace=True)
 
@@ -106,6 +106,7 @@ sentence = [word for word in sentence.split() if word.lower() not in stop_words]
 sentence = " ".join(sentence)
 sentence = count_vec.transform([sentence])
 
+# testing with Naive Bayes
 model = pickle.load(open("models/model_nb.pk1", "rb"))
 pred = model.predict(sentence)[0]
 res = "This is a positive sentence!" if pred == 1 else "This is a negative sentence!"
