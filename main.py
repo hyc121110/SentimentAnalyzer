@@ -22,7 +22,6 @@ tokenizer = RegexpTokenizer(r'\w+')
 from nltk.stem import WordNetLemmatizer
 
 # initialize dataframe
-start = time.time()
 df = pd.read_csv('data/employee_reviews.csv', index_col=0)
 df = df[['pros', 'cons']]
 #df.drop(columns=['location', 'dates', 'advice-to-mgmt', 'summary', 'helpful-count', 'job-title', 'link', 'overall-rating', 'work-balance-stars', 'culture-values-stars', 'carrer-opportunities-stars'], inplace=True)
@@ -113,8 +112,9 @@ print("Logistic Regression Accuracy on the companies dataset: {:.2f}%".format(ac
 pickle.dump(nb, open(path + "/" + "model_lr.pk1", "wb"))
 print("Model Log Reg created")
 
-# Random Forest: ~86% accuracy with the following params values
-rf = RandomForestClassifier(max_depth=20, n_estimators=100).fit(X_train, y_train)
+# Random Forest: ~90% accuracy with the following params values (3 mins)
+start = time.time()
+rf = RandomForestClassifier(max_depth=100, n_estimators=100).fit(X_train, y_train)
 y_pred = rf.predict(X_test)
 
 acc = accuracy_score(y_test, y_pred)
