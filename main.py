@@ -11,7 +11,6 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
-import numpy as np
 
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 import pickle
@@ -26,9 +25,8 @@ from wordcloud import WordCloud
 
 # plotly
 import plotly
-import plotly.plotly as py
 import plotly.graph_objs as go
-from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+from plotly.offline import init_notebook_mode
 from plotly import tools
 init_notebook_mode(connected=True)
 
@@ -40,7 +38,10 @@ tokenizer = RegexpTokenizer(r'\w+')
 from nltk.stem import WordNetLemmatizer
 from nltk import ngrams, word_tokenize
 
+import concurrent.futures
+
 # initialize dataframe
+start = time.time()
 df = pd.read_csv('data/employee_reviews.csv', index_col=0)
 df = df[['pros', 'cons']]
 #df.drop(columns=['location', 'dates', 'advice-to-mgmt', 'summary', 'helpful-count', 'job-title', 'link', 'overall-rating', 'work-balance-stars', 'culture-values-stars', 'carrer-opportunities-stars'], inplace=True)
@@ -81,6 +82,16 @@ for p, c in zip(pros_batch, cons_batch):
     lemm = WordNetLemmatizer()
     cons_lem_temp = [lemm.lemmatize(word) for word in cons_no_stop]
     cons_lem.append(" ".join(cons_lem_temp))
+
+# try with multiprocessing
+#def lemmatization():
+#    pass
+#
+#start = time.time()
+#with concurrent.futures.ProcessPoolExecutor() as executor:
+#    for 
+#end = time.time()
+#print("Time elapsed: {} seconds".format(end - start))
 
 # combine all reviews into one long list
 batch = pros_lem + cons_lem
@@ -131,18 +142,15 @@ print("Logistic Regression Accuracy on the companies dataset: {:.2f}%".format(ac
 pickle.dump(nb, open(path + "/" + "model_lr.pk1", "wb"))
 print("Model Log Reg created")
 
-# Random Forest: ~90% accuracy with the following params values (3 mins)
-#start = time.time()
-#rf = RandomForestClassifier(max_depth=100, n_estimators=300).fit(X_train, y_train)
-#y_pred = rf.predict(X_test)
-#
-#acc = accuracy_score(y_test, y_pred)
-#print("Random Forest Accuracy on the companies dataset: {:.2f}%".format(acc*100))
-#pickle.dump(nb, open(path + "/" + "model_rf.pk1", "wb"))
-#print("Model Random Forest created")
-#
-#end = time.time()
-#print("Time elapsed: {} seconds".format(end - start))
+# Random Forest: ~89% accuracy with the following params values
+rf = RandomForestClassifier(max_depth=50, n_estimators=100).fit(X_train, y_train)
+y_pred = rf.predict(X_test)
+
+acc = accuracy_score(y_test, y_pred)
+print("Random Forest Accuracy on the companies dataset: {:.2f}%".format(acc*100))
+pickle.dump(nb, open(path + "/" + "model_rf.pk1", "wb"))
+print("Model Random Forest created")
+
 
 # Graph stuff
 
@@ -229,13 +237,13 @@ fig = tools.make_subplots(
         cols=2, 
         vertical_spacing=0.04,
         horizontal_spacing=0.05,
-        subplot_titles=["","Frequent Bigrams of Reviews"])
+        subplot_titles=["","Frequent Bigrams of Pros Reviews"])
 fig.append_trace(sym_2, 1, 2)
 fig['layout'].update(
         height=1080, 
         width=800, 
         paper_bgcolor='rgb(233,233,233)', 
-        title="Bigram Plots of Reviews Keywords after removing Stopwords")
+        title="Bigram Plots of Pros Reviews Keywords after removing Stopwords")
 plotly.offline.plot(fig, filename='pros-bigram-word-plots.html')
 #iplot(fig, filename='bigram-word-plots') # jupyter notebook only
 
@@ -257,13 +265,13 @@ fig = tools.make_subplots(
         cols=2, 
         vertical_spacing=0.04,
         horizontal_spacing=0.05,
-        subplot_titles=["", "Frequent Trigrams of Reviews"])
+        subplot_titles=["", "Frequent Trigrams of Pros Reviews"])
 fig.append_trace(sym_3, 1, 2)
 fig['layout'].update(
         height=1080, 
         width=800, 
         paper_bgcolor='rgb(233,233,233)', 
-        title="Trigram Plots of Reviews Keywords after removing Stopwords")
+        title="Trigram Plots of Pros Reviews Keywords after removing Stopwords")
 plotly.offline.plot(fig, filename='pros-trigram-word-plots.html')
 #iplot(fig, filename='trigram-word-plots') # jupyter notebook only
 
@@ -287,15 +295,15 @@ fig = tools.make_subplots(
         cols=2, 
         vertical_spacing=0.04,
         horizontal_spacing=0.05,
-        subplot_titles=["","Frequent Bigrams of Reviews"])
+        subplot_titles=["","Frequent Bigrams of Cons Reviews"])
 fig.append_trace(sym_2, 1, 2)
 fig['layout'].update(
         height=1080, 
         width=800, 
         paper_bgcolor='rgb(233,233,233)', 
-        title="Bigram Plots of Reviews Keywords after removing Stopwords")
+        title="Bigram Plots of Cons Reviews Keywords after removing Stopwords")
 plotly.offline.plot(fig, filename='cons-bigram-word-plots.html')
-#iplot(fig, filename='bigram-word-plots') # jupyter notebook only
+# plotly.offline.iplot(fig, filename='bigram-word-plots') # jupyter notebook only
 
 # Plotting the trigram plot
 trigram_dict = defaultdict(int)
@@ -315,13 +323,15 @@ fig = tools.make_subplots(
         cols=2, 
         vertical_spacing=0.04,
         horizontal_spacing=0.05,
-        subplot_titles=["", "Frequent Trigrams of Reviews"])
+        subplot_titles=["", "Frequent Trigrams of Cons Reviews"])
 fig.append_trace(sym_3, 1, 2)
 fig['layout'].update(
         height=1080, 
         width=800, 
         paper_bgcolor='rgb(233,233,233)', 
-        title="Trigram Plots of Reviews Keywords after removing Stopwords")
+        title="Trigram Plots of Cons Reviews Keywords after removing Stopwords")
 plotly.offline.plot(fig, filename='cons-trigram-word-plots.html')
-#iplot(fig, filename='trigram-word-plots') # jupyter notebook only
+# plotly.offline.iplot(fig, filename='trigram-word-plots') # jupyter notebook only
 
+end = time.time()
+print("Time elapsed: {} seconds".format(end - start))
