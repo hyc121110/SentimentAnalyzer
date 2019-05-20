@@ -38,8 +38,6 @@ tokenizer = RegexpTokenizer(r'\w+')
 from nltk.stem import WordNetLemmatizer
 from nltk import ngrams, word_tokenize
 
-import concurrent.futures
-
 # initialize dataframe
 start = time.time()
 df = pd.read_csv('data/employee_reviews.csv', index_col=0)
@@ -68,8 +66,8 @@ for pros, cons in zip(df['pros'], df['cons']):
     pros_batch.append(words)
     cons = replace_contractions(cons)
     words = tokenizer.tokenize(str(cons))
-    cons_batch.append(words)
-    
+    cons_batch.append(words)   
+
 # lemmatization
 pros_lem = list()
 cons_lem = list()
@@ -82,16 +80,6 @@ for p, c in zip(pros_batch, cons_batch):
     lemm = WordNetLemmatizer()
     cons_lem_temp = [lemm.lemmatize(word) for word in cons_no_stop]
     cons_lem.append(" ".join(cons_lem_temp))
-
-# try with multiprocessing
-#def lemmatization():
-#    pass
-#
-#start = time.time()
-#with concurrent.futures.ProcessPoolExecutor() as executor:
-#    for 
-#end = time.time()
-#print("Time elapsed: {} seconds".format(end - start))
 
 # combine all reviews into one long list
 batch = pros_lem + cons_lem
@@ -142,8 +130,8 @@ print("Logistic Regression Accuracy on the companies dataset: {:.2f}%".format(ac
 pickle.dump(nb, open(path + "/" + "model_lr.pk1", "wb"))
 print("Model Log Reg created")
 
-# Random Forest: ~89% accuracy with the following params values
-rf = RandomForestClassifier(max_depth=50, n_estimators=100).fit(X_train, y_train)
+# Random Forest: ~91% accuracy with the following params values
+rf = RandomForestClassifier(max_depth=200, n_estimators=100).fit(X_train, y_train)
 y_pred = rf.predict(X_test)
 
 acc = accuracy_score(y_test, y_pred)
@@ -155,7 +143,7 @@ print("Model Random Forest created")
 # Graph stuff
 
 # Visualising the results using Confusion Matrix
-print("Confustion Matrix")
+print("\nConfustion Matrix")
 mat = confusion_matrix(y_test, y_pred)
 sns.heatmap(mat.T, square=True, annot=True, fmt='d', cbar=False,
             xticklabels=['pros','cons'], yticklabels=['pros','cons'])
@@ -169,7 +157,7 @@ for sent in pros_lem:
     tmp = sent.split()
     pros_cloud += tmp
 
-print("Word Cloud of Pros Review")
+print("\nWord Cloud of Pros Review")
 word_cnt = Counter(pros_cloud)
 reviews_cloud = WordCloud(background_color='black', width=1280, height=720).generate_from_frequencies(word_cnt)
 plt.imshow(reviews_cloud)
@@ -182,7 +170,7 @@ for sent in cons_lem:
     tmp = sent.split()
     cons_cloud += tmp
 
-print("Word Cloud of Cons Review")
+print("\nWord Cloud of Cons Review")
 word_cnt = Counter(cons_cloud)
 reviews_cloud = WordCloud(background_color='black', width=1280, height=720).generate_from_frequencies(word_cnt)
 plt.imshow(reviews_cloud)
