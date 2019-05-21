@@ -98,7 +98,7 @@ X_counts = count_vec.fit_transform(batch)
 tfidf_transformer = TfidfTransformer()
 X_tfidf = tfidf_transformer.fit_transform(X_counts)
 
-pickle.dump(count_vec, open(path + "/" + "count_vec.pk1", "wb"))
+#pickle.dump(count_vec, open(path + "/" + "count_vec.pk1", "wb"))
 
 # have 70% of the data as training data, 30% as testing data
 X_train, X_test, y_train, y_test = train_test_split(X_tfidf, labels, test_size=0.3)
@@ -109,8 +109,17 @@ y_pred = nb.predict(X_test)
     
 acc = accuracy_score(y_test, y_pred)
 print("Naive Bayes Accuracy on the companies dataset: {:.2f}%".format(acc*100))
-pickle.dump(nb, open(path + "/" + "model_nb.pk1", "wb"))
-print("Model NB created")
+#pickle.dump(nb, open(path + "/" + "model_nb.pk1", "wb"))
+#print("Model NB created")
+
+# Visualising the results using Confusion Matrix
+print("\nNaive Bayes Confustion Matrix")
+mat = confusion_matrix(y_test, y_pred)
+sns.heatmap(mat.T, square=True, annot=True, fmt='d', cbar=False,
+            xticklabels=['pros','cons'], yticklabels=['pros','cons'])
+plt.xlabel('true label')
+plt.ylabel('predicted label')
+plt.show()
 
 # Linear Support Vector Classifier: ~92% accuracy
 l_svc = LinearSVC().fit(X_train, y_train)
@@ -118,8 +127,17 @@ y_pred = l_svc.predict(X_test)
 
 acc = accuracy_score(y_test, y_pred)
 print("Linear SVC Accuracy on the companies dataset: {:.2f}%".format(acc*100))
-pickle.dump(nb, open(path + "/" + "model_lsvc.pk1", "wb"))
-print("Model LinearSVC created")
+#pickle.dump(nb, open(path + "/" + "model_lsvc.pk1", "wb"))
+#print("Model LinearSVC created")
+
+# Visualising the results using Confusion Matrix
+print("\nLinear SVC Confustion Matrix")
+mat = confusion_matrix(y_test, y_pred)
+sns.heatmap(mat.T, square=True, annot=True, fmt='d', cbar=False,
+            xticklabels=['pros','cons'], yticklabels=['pros','cons'])
+plt.xlabel('true label')
+plt.ylabel('predicted label')
+plt.show()
 
 # Logistic Regression: ~92% accuracy
 lr = LogisticRegression(solver='liblinear').fit(X_train, y_train)
@@ -127,29 +145,38 @@ y_pred = lr.predict(X_test)
 
 acc = accuracy_score(y_test, y_pred)
 print("Logistic Regression Accuracy on the companies dataset: {:.2f}%".format(acc*100))
-pickle.dump(nb, open(path + "/" + "model_lr.pk1", "wb"))
-print("Model Log Reg created")
-
-# Random Forest: ~91% accuracy with the following params values
-rf = RandomForestClassifier(max_depth=200, n_estimators=100).fit(X_train, y_train)
-y_pred = rf.predict(X_test)
-
-acc = accuracy_score(y_test, y_pred)
-print("Random Forest Accuracy on the companies dataset: {:.2f}%".format(acc*100))
-pickle.dump(nb, open(path + "/" + "model_rf.pk1", "wb"))
-print("Model Random Forest created")
-
-
-# Graph stuff
+#pickle.dump(nb, open(path + "/" + "model_lr.pk1", "wb"))
+#print("Model Log Reg created")
 
 # Visualising the results using Confusion Matrix
-print("\nConfustion Matrix")
+print("\nLogistic Regression Confustion Matrix")
 mat = confusion_matrix(y_test, y_pred)
 sns.heatmap(mat.T, square=True, annot=True, fmt='d', cbar=False,
             xticklabels=['pros','cons'], yticklabels=['pros','cons'])
 plt.xlabel('true label')
 plt.ylabel('predicted label')
 plt.show()
+
+# Random Forest: ~91% accuracy with the following params values
+#rf = RandomForestClassifier(max_depth=300, n_estimators=300).fit(X_train, y_train)
+#y_pred = rf.predict(X_test)
+#
+#acc = accuracy_score(y_test, y_pred)
+#print("Random Forest Accuracy on the companies dataset: {:.2f}%".format(acc*100))
+#pickle.dump(nb, open(path + "/" + "model_rf.pk1", "wb"))
+#print("Model Random Forest created")
+
+# Visualising the results using Confusion Matrix
+#print("\nLogistic Regression Confustion Matrix")
+#mat = confusion_matrix(y_test, y_pred)
+#sns.heatmap(mat.T, square=True, annot=True, fmt='d', cbar=False,
+#            xticklabels=['pros','cons'], yticklabels=['pros','cons'])
+#plt.xlabel('true label')
+#plt.ylabel('predicted label')
+#plt.show()
+
+
+# Graph stuff
 
 # Pros Word Cloud
 pros_cloud = list()
