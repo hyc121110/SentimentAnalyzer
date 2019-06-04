@@ -25,9 +25,9 @@ print("Logistic Regression model is " + '{0:.2f}'.format(pred3[0][0]*100) + "% s
 score = (pred1[0][0] + pred2[0][0] + pred3[0][0]) / 3
 print("\nAveraging the three models: the new model is " + '{0:.2f}'.format(score*100) + "% sure that this sentence is negative, " + '{0:.2f}'.format((1-score)*100) + "% sure that this sentence is positive.")
 
-if score > 0.75:
+if score > 0.8:
     print("\nThis is a negative review!")
-elif score < 0.25:
+elif score < 0.2:
     print("\nThis is a positive review!")
 else:
     print("\nThis is a neutral review!")
