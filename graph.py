@@ -15,14 +15,14 @@ def run(input_s):
     model1 = pickle.load(open("models/model_nb.pk1", "rb"))
     model2 = pickle.load(open("models/model_lsvc.pk1", "rb"))
     model3 = pickle.load(open("models/model_lr.pk1", "rb"))
-    count_vec = pickle.load(open("models/count_vec.pk1", "rb"))
+    tfidf_vec = pickle.load(open("models/tfidf_vec.pk1", "rb"))
 
     # Try with user input
     #print("Please enter a review of a company: ", end='')
     sentence = input_s
     sentence = [word for word in sentence.split() if word.lower() not in stop_words]
     sentence = " ".join(sentence)
-    sent = count_vec.transform([sentence])
+    sent = tfidf_vec.transform([sentence])
 
     pred1 = model1.predict_proba(sent)
     total_out += ("\nNaive Bayes model is " + '{0:.2f}'.format(pred1[0][0]*100) + "% sure that this sentence is negative, " + '{0:.2f}'.format(pred1[0][1]*100) + "% sure that this sentence is positive.\n")
