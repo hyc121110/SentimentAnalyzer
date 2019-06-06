@@ -105,3 +105,6 @@ venv.bak/
 
 # html
 .html
+
+# desktop.ini
+desktop.ini
