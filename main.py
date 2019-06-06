@@ -2,6 +2,7 @@
 
 # sklearn
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
@@ -95,18 +96,21 @@ if not os.path.exists(path):
     os.mkdir(path)
     
 # building the classifier
-count_vec = CountVectorizer(ngram_range=(1,2))
-X_counts = count_vec.fit_transform(batch)
+#count_vec = CountVectorizer(ngram_range=(1,2))
+#X_counts = count_vec.fit_transform(batch)
+#
+#tfidf_transformer = TfidfTransformer()
+#X_tfidf = tfidf_transformer.fit_transform(X_counts)
 
-tfidf_transformer = TfidfTransformer()
-X_tfidf = tfidf_transformer.fit_transform(X_counts)
+count_vec = TfidfVectorizer(ngram_range=(1,2))
+X_tfidf = count_vec.fit_transform(batch)
 
-pickle.dump(count_vec, open(path + "/" + "count_vec.pk1", "wb"))
+pickle.dump(count_vec, open(path + "/" + "tfidf_vec.pk1", "wb"))
 
 # have 70% of the data as training data, 30% as testing data
 X_train, X_test, y_train, y_test = train_test_split(X_tfidf, labels, test_size=0.3)
 
-# Naive Bayes Classifier: ~93.5% accuracy
+# Naive Bayes Classifier: ~93% accuracy
 nb = MultinomialNB().fit(X_train, y_train)
 y_pred = nb.predict(X_test)
     
@@ -143,7 +147,7 @@ plt.xlabel('true label')
 plt.ylabel('predicted label')
 plt.show()
 
-# Logistic Regression: ~94% accuracy
+# Logistic Regression: ~93.5% accuracy
 lr = LogisticRegression(solver='newton-cg').fit(X_train, y_train)
 y_pred = lr.predict(X_test)
 
