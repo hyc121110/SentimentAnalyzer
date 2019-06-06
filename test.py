@@ -5,7 +5,7 @@ stop_words=set(stopwords.words('english'))
 model1 = pickle.load(open("models/model_nb.pk1", "rb"))
 model2 = pickle.load(open("models/model_lsvc.pk1", "rb"))
 model3 = pickle.load(open("models/model_lr.pk1", "rb"))
-count_vec = pickle.load(open("models/count_vec.pk1", "rb"))
+count_vec = pickle.load(open("models/tfidf_vec.pk1", "rb"))
 
 # Try with user input
 print("Please enter a review of a company: ", end='')
